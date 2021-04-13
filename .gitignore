@@ -105,7 +105,7 @@ dist
 
 # Hardhat
 cache
-artifact
+artifacts
 
 # Intellij
 .idea
