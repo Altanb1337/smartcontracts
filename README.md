@@ -59,6 +59,8 @@ Once you played, the lottery is stated as "playing" and waiting for the oracle n
 
 ## Bet
 
+As mentioned above, the bet is set by the user (except for fees).
+
 ## 1POOL Token
 
 1% of every transfer is burned to increase deflation.
@@ -84,6 +86,8 @@ By calling this function, the "dev" can disable the dev fund :
 > Disabling the dev fund is irreversible, it cannot be enabled again.
 
 ## Gas usage
+
+![Gas report](https://i.ibb.co/zxbw9zm/gas-report.png)
 
 ## Hardhat
 
