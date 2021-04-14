@@ -66,7 +66,24 @@ Once you played, the lottery is stated as "playing" and waiting for the oracle n
 
 ## Dev Fund
 
-## Gas report
+2% of the Yield Farming rewards go to the dev fund.
+
+``` javascript
+if (devFundEnabled) {
+    onepool.mint(devAddr, onePoolReward.div(50));
+}
+```
+
+But this mecanism can be disabled ! Because we see that in most of Yield Farming projects,
+the dev fund grows exponentially, and open the door for a rug pull.
+
+By calling this function, the "dev" can disable the dev fund :
+
+`function disableDevFund() external {...}`
+
+> Disabling the dev fund is irreversible, it cannot be enabled again.
+
+## Gas usage
 
 ## Hardhat
 
