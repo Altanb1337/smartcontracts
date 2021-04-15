@@ -132,7 +132,9 @@ To run this hardhat project, please use the following commands :
 
 ## Contracts
 
-_Not deployed yet (soon)_
+- OnePoolToken => _Not deployed yet_
+- LotteryPool => _Not deployed yet_
+- PoolMaster => _Not deployed yet_
 
 ## Accounts
 
