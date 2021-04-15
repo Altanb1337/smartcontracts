@@ -3,6 +3,8 @@
 *This repository contains the smart contracts and tests of onepool.finance project.
 Any feedbacks or audits are welcome. Use it at your own risk. For more information, please email us at onepoolfinance@gmail.com.*
 
+<img src="https://i.ibb.co/2c8Tf1P/1-resized.png" alt="logo" width="500"/>
+
 ## Introduction
 
 onepool.finance is a Yield Farming/Lottery protocol on Binance Smart Chain, using the 1POOL token.
@@ -61,10 +63,36 @@ Once you played, the lottery is stated as "playing" and waiting for the oracle n
 
 As mentioned above, the bet is set by the user (except for fees).
 
+**The user can't bet more than half of the prize.** For example, if the balance of the 
+LotteryPool is 1000 1POOL, you can't bet more than 500 1POOL.
+
+So what's the impact of a higher bet ?
+<br>**If you want to bet the maximum amount, i.e 50% of the prize, you have a 50% chance to win.**
+
+You can't bet 0 1POOL, however there is no minimum. You can bet 0,0000001 1POOL with a very low chance to win.
+
 ## 1POOL Token
 
 1% of every transfer is burned to increase deflation.
 <br>Otherwise, this is standard ERC-20 Token.
+
+## Yield Farming
+
+The Yield Farming part of this project (PoolMaster) is a fork of Sushiswap with some changes :
+- The owner can't add more than one pool
+- The dev fund can be disabled
+- Removed massUpdatePool()
+
+**So, why only ONE pool ?**
+
+Because we want to focus the liquidity on a single pool, and remove non-1POOL pools.
+<br>This way, even if the APY will dicrease, it will more viable in the long term.
+
+## Initial Liquidity
+
+If there is no non-1POOL pools, we can't mint the first tokens by farming.
+<br>This is why the owner will receive 10.000 1POOLs (at the deployment) and be this first liquidity provider.
+
 
 ## Dev Fund
 
@@ -87,7 +115,13 @@ By calling this function, the "dev" can disable the dev fund :
 
 ## Gas usage
 
+_from : npx hardhat test_
+
 ![Gas report](https://i.ibb.co/zxbw9zm/gas-report.png)
+
+## Unit tests
+
+The project has been tested with unit tests. 
 
 ## Hardhat
 
@@ -99,5 +133,7 @@ To run this hardhat project, please use the following commands :
 
 `npx hardhat test`
 
+## Contracts
 
+_Not deployed yet (soon)_
 
