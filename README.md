@@ -84,13 +84,12 @@ The Yield Farming part of this project (PoolMaster) is a fork of Sushiswap with 
 **So, why only ONE pool ?**
 
 Because we want to focus the liquidity on a single pool, and remove non-1POOL pools.
-<br>This way, even if the APY will dicrease, it will more viable in the long term.
+<br>This way, even if the APY will dicrease, it will be more viable in the long term.
 
 ## Initial Liquidity
 
 If there is no non-1POOL pools, we can't mint the first tokens by farming.
 <br>This is why the owner will receive 10.000 1POOLs (at the deployment) and be this first liquidity provider.
-
 
 ## Dev Fund
 
@@ -134,4 +133,9 @@ To run this hardhat project, please use the following commands :
 ## Contracts
 
 _Not deployed yet (soon)_
+
+## Accounts
+
+- Deployer => [_0xCA68C65CF332Eb855E7Bc680009eCf637e810149_](https://bscscan.com/address/0xCA68C65CF332Eb855E7Bc680009eCf637e810149)
+- Dev Fund  => [_0xCCb073371c84c5Ef0d0E1F699aB58084D9514cC9_](https://bscscan.com/address/0xCCb073371c84c5Ef0d0E1F699aB58084D9514cC9)
 
