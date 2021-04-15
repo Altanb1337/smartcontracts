@@ -3,7 +3,7 @@
 *This repository contains the smart contracts and tests of onepool.finance project.
 Any feedbacks or audits are welcome. Use it at your own risk. For more information, please email us at onepoolfinance@gmail.com.*
 
-<img src="https://i.ibb.co/2c8Tf1P/1-resized.png" alt="logo" width="500"/>
+![](https://i.ibb.co/2c8Tf1P/1-resized.png=100x)
 
 ## Introduction
 
