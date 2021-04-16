@@ -29,6 +29,16 @@ _**The amount of the bet is burned, and will increase the deflation**_.
 
 ![1Pool Mechanism](https://i.ibb.co/kXrT1xd/1pool-mechanism.png)
 
+## Lottery activation
+
+Once the lottery is deployed, it is "stopped" to finish the front-end development and let the pool fill up.
+<br>**This will be activated at a later stage.**
+
+## Pool growth
+
+As previously explained, 10% of the rewards go to the LotteryPool. But it can be adjusted between 5%
+and 10% by calling `updatePoolRewardDivisor(uint256 _poolRewardDivisor) {...}`
+
 ## Pause
 
 To allow time for the lottery to increase its reward, we included a "pause".
@@ -72,7 +82,7 @@ You can't bet 0 1POOL, however there is no minimum. You can bet 0,0000001 1POOL 
 ## 1POOL Token
 
 1% of every transfer is burned to increase deflation.
-<br>Otherwise, this is standard ERC-20 Token.
+<br>Otherwise, this is standard BEP-20 Token.
 
 ## Yield Farming
 
@@ -90,6 +100,11 @@ Because we want to focus the liquidity on a single pool, and remove non-1POOL po
 
 If there is no non-1POOL pools, we can't mint the first tokens by farming.
 <br>This is why the owner will receive 10.000 1POOLs (at the deployment) and be this first liquidity provider.
+
+## 1POOL per block
+
+The number of 1POOL per block is set to **1**.
+<br>However it can be changed with `updateOnePoolPerBlock(uint256 _onePoolPerBlock) {...}` but only between 0.5 and 1.5.
 
 ## Dev Fund
 
