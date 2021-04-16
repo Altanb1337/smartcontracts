@@ -128,7 +128,7 @@ contract PoolMaster is Ownable {
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
         uint256 onePoolReward = multiplier.mul(onePoolPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
 
-        onepool.mint(lotteryPoolAddr, onePoolReward.div(10)); // 10% 1POOL to the LotteryPool (100/10 = 10)
+        onepool.mint(lotteryPoolAddr, onePoolReward.div(poolRewardDivisor)); // 10% 1POOL to the LotteryPool (100/10 = 10)
 
         if (devFundEnabled) {
             onepool.mint(devAddr, onePoolReward.div(50));   // 2% 1POOL to the devs fund (100/50 = 2)

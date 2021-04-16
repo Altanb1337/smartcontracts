@@ -18,7 +18,7 @@ However, these two ideas are all together.
 (LotteryPool). The prize is bigger as more people are farming.
 
 > **10% of the rewards value go to the LotteryPool (not a fee)**
-> <br>`onepool.mint(lotteryPoolAddr, onePoolReward.div(10));`
+> <br>`onepool.mint(lotteryPoolAddr, onePoolReward.div(poolRewardDivisor));`
 
 All tokens in the pool are intended to be won. The user sets the  bet :
 <br>  More you bet, more you have a chance to win the lottery.
