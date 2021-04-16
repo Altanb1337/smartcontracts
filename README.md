@@ -17,7 +17,7 @@ However, these two ideas are all together.
 <br> The Yield Farming protocol (*PoolMaster*) mints 1POOL tokens to the Lottery protocol
 (LotteryPool). The prize is bigger as more people are farming.
 
-> **10% of the rewards go to the LotteryPool**
+> **10% of the rewards value go to the LotteryPool (not a fee)**
 > <br>`onepool.mint(lotteryPoolAddr, onePoolReward.div(10));`
 
 All tokens in the pool are intended to be won. The user sets the  bet :
