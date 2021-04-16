@@ -32,6 +32,7 @@ describe("LotteryPool contract", function () {
         boggedToken = await boggedTokenContract.deploy();
 
         lotteryPool = await lotteryPoolContract.deploy(token.address, boggedToken.address);
+        await lotteryPool.updateStopped(false);
 
         let onePoolPerBlock = ethers.utils.parseEther('1');
         poolMaster = await poolMasterContract.deploy(token.address, dev.address, 1, 1, onePoolPerBlock, lotteryPool.address);

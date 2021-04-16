@@ -76,7 +76,7 @@ contract LotteryPoolTest is Ownable, IReceivesBogRand {
         onepool = _onepool;
         paused = false;
         pauseDuration = 30 minutes;
-        stopped = false;
+        stopped = true;
         playing = false;
 
         // (TEST) oracle = IBogRandOracle(_bogRandOracleAddr);
