@@ -65,7 +65,7 @@ It allows applications to get Randomness On-Chain in a verifiably secure fashion
 ## Latency 
 
 Because the Oracle send a random number in a separate transaction, you are not playing in one transaction.
-Once you played, the lottery is stated as "playing" and waiting for the oracle number. Between this blocks, nobody can play the lottery.
+Once you played, the lottery is stated as "playing" and waiting for the oracle number. Between these blocks, nobody can play the lottery.
 
 ## Bet
 
@@ -94,7 +94,7 @@ The Yield Farming part of this project (PoolMaster) is a fork of Sushiswap with 
 **So, why only ONE pool ?**
 
 Because we want to focus the liquidity on a single pool, and remove non-1POOL pools.
-<br>This way, even if the APY will dicrease, it will be more viable in the long term.
+<br>This way, even if the APY will decrease, it will be more viable in the long term.
 
 ## Initial Liquidity
 
