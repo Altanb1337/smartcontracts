@@ -155,4 +155,3 @@ To run this hardhat project, please use the following commands :
 
 - Deployer => [_0xCA68C65CF332Eb855E7Bc680009eCf637e810149_](https://bscscan.com/address/0xCA68C65CF332Eb855E7Bc680009eCf637e810149)
 - Dev Fund  => [_0xCCb073371c84c5Ef0d0E1F699aB58084D9514cC9_](https://bscscan.com/address/0xCCb073371c84c5Ef0d0E1F699aB58084D9514cC9)
-
