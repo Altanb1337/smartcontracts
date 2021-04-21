@@ -21,25 +21,7 @@ contract OnePoolToken is ERC20("onepool.finance", "1POOL"), Ownable {
 
     }
 
-    /// @notice overrides transfer function to add 1% burn for every transfer
-    function _transfer(address sender, address recipient, uint256 amount) internal virtual override {
-        uint256 rateAmount = 1; // burn rate is 1%
-
-        // Calculate the amount to burn
-        uint256 burnAmount = amount.mul(rateAmount).div(100);
-
-        // Calculate the amount to send
-        uint256 sendAmount = amount.sub(burnAmount);
-
-        // In case the burnAmount is invalid
-        require(amount == sendAmount + burnAmount, "Burn value invalid");
-
-        super._burn(sender, burnAmount);
-
-        super._transfer(sender, recipient, sendAmount);
-    }
-
-    /// Allow everybody to burn 1POOL tokens
+    /// @notice Allow everybody to burn 1POOL tokens
     function burn(uint256 amount) public {
         _burn(_msgSender(), amount);
     }

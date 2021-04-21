@@ -264,7 +264,7 @@ describe("LotteryPool contract", function () {
         });
 
         it("Should emit nowPlaying event", async function () {
-            const reward = ethers.utils.parseEther('990');
+            const reward = ethers.utils.parseEther('1000');
             const player = owner.address;
             const bet = 1;
 

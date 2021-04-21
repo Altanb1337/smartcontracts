@@ -74,13 +74,11 @@ describe("Token contract", function () {
             const finalOwnerBalance = await token.balanceOf(owner.address);
             expect(finalOwnerBalance.toString()).to.equal('9999999999999999999700');
 
-            // 100 - (1% burn rate)
             const addr1Balance = await token.balanceOf(addr1.address);
-            expect(addr1Balance).to.equal(99);
+            expect(addr1Balance).to.equal(100);
 
-            // 200 - (1% burn rate)
             const addr2Balance = await token.balanceOf(addr2.address);
-            expect(addr2Balance).to.equal(198);
+            expect(addr2Balance).to.equal(200);
         });
     });
 });
