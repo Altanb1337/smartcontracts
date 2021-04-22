@@ -164,7 +164,7 @@ contract PoolMaster is Ownable {
     }
 
     /// @notice Update the bonusEndBlock
-    function setBonusEndBlock(uint256 _bonusEndBlock) external onlyOwner {
+    function updateBonusEndBlock(uint256 _bonusEndBlock) external onlyOwner {
         bonusEndBlock = _bonusEndBlock;
     }
 

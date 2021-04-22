@@ -99,9 +99,9 @@ contract LotteryPool is Ownable, IReceivesBogRand {
     /// the mechanism.
     function play(uint256 _bet) public {
         unPause(); // Try to unpause the lottery if possible
-        require(msg.sender != currentPlayer.addr, "Cant play twice in a succession");
-        require(allowedToPlay(_bet, msg.sender), "You're not allowed to play");
-        require(onepool.balanceOf(address(msg.sender)) >= _bet, "You can't bet more than what you have");
+        require(msg.sender != currentPlayer.addr, "LotteryPool::play: Cant play twice in a succession");
+        require(allowedToPlay(_bet, msg.sender), "LotteryPool::play: You're not allowed to play");
+        require(onepool.balanceOf(address(msg.sender)) >= _bet, "LotteryPool::play: You can't bet more than what you have");
 
         // Send 0.25 BOG to the lottery pool (to pay the fees)
         boggedToken.transferFrom(msg.sender, address(this), uint256(25).mul(1e16));
@@ -166,7 +166,7 @@ contract LotteryPool is Ownable, IReceivesBogRand {
 
     /// @notice Try to unpause the lottery if the lottery is unpausable.
     function unPause() public {
-        require(unpausable(), "Need to be unpausable");
+        require(unpausable(), "LotteryPool::unPause: Need to be unpausable");
         if (paused = true) {
             // Emit unpaused only if paused change from true to false
             emit unpaused();
@@ -206,7 +206,8 @@ contract LotteryPool is Ownable, IReceivesBogRand {
     /// for the player waiting
     /// @param random the random number given by BogRNG oracle
     function receiveRandomness(uint256 random) external override {
-        require(msg.sender == address(oracle)); // Ensure the sender is the oracle
+        // Ensure the sender is the oracle
+        require(msg.sender == address(oracle), "LotteryPool::receiveRandomness: need to be the oracle");
         run(random);
     }
 
@@ -248,7 +249,7 @@ contract LotteryPool is Ownable, IReceivesBogRand {
     /// When the player wins, he wins the reward amount at the moment he played.
     /// It means that the pool can grow while waiting for the oracle callback.
     function run(uint256 _externalRandomNumber) internal returns (bool) {
-        require(playing, "Need to be playing");
+        require(playing, "LotteryPool::run: Need to be playing");
         bool result = false;
 
         bytes32 _blockhash = blockhash(block.number - 1);

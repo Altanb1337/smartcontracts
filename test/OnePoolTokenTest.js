@@ -37,15 +37,15 @@ describe("Token contract", function () {
     describe("Transactions", function () {
         it("Should transfer tokens between accounts", async function () {
             // Transfer 50 tokens from owner to addr1
-            await token.transfer(addr1.address, 50);
+            await token.transfer(addr1.address, 1000);
             const addr1Balance = await token.balanceOf(addr1.address);
-            expect(addr1Balance).to.equal(50);
+            expect(addr1Balance).to.equal(960);
 
             // Transfer 50 tokens from addr1 to addr2
             // We use .connect(signer) to send a transaction from another account
-            await token.connect(addr1).transfer(addr2.address, 50);
+            await token.connect(addr1).transfer(addr2.address, 960);
             const addr2Balance = await token.balanceOf(addr2.address);
-            expect(addr2Balance).to.equal(50);
+            expect(addr2Balance).to.equal(922);
         });
 
         it("Should fail if sender doesn’t have enough tokens", async function () {
@@ -75,10 +75,10 @@ describe("Token contract", function () {
             expect(finalOwnerBalance.toString()).to.equal('9999999999999999999700');
 
             const addr1Balance = await token.balanceOf(addr1.address);
-            expect(addr1Balance).to.equal(100);
+            expect(addr1Balance).to.equal(96);
 
             const addr2Balance = await token.balanceOf(addr2.address);
-            expect(addr2Balance).to.equal(200);
+            expect(addr2Balance).to.equal(192);
         });
     });
 });
