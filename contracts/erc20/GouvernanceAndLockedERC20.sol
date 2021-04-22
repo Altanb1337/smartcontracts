@@ -152,8 +152,10 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
         emit RewardLiquidityProviders(amount);
     }
 
+    /// @notice burn the locked tokens in the actual contract
+    /// @param amount the amount to burn
     function burnLockedTokens(uint256 amount) private {
-        // TODO
+        _burn(address(this), amount);
     }
 
     function createLotteryGas(uint256 amount) private {
