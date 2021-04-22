@@ -9,6 +9,7 @@ pragma solidity >=0.6.0<0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./erc20/GouvernanceAndLockedERC20.sol";
+import "./interfaces/IPancakeFactory.sol";
 
 contract OnePoolToken is GouvernanceAndLockedERC20, Ownable {
 
@@ -22,6 +23,11 @@ contract OnePoolToken is GouvernanceAndLockedERC20, Ownable {
 
         // 25 = 4% locked for every transfer
         liquidityLockDivisor = 25;
+
+        pancakeV2Router = 0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F;
+        IPancakeRouter02 router = IPancakeRouter02(pancakeV2Router);
+        pancakeV2Pair = IPancakeFactory(router.factory())
+        .createPair(address(this), router.WETH());
     }
 
     /// @notice Allow everybody to burn 1POOL tokens
