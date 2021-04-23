@@ -128,9 +128,15 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
         return ERC20(pancakeV2Pair).balanceOf(address(0));
     }
 
+    /// @notice returns the amount of 1POOL burned
+    /// (Lottery and locked tokens)
+    function burnedSupply() public view returns (uint256) {
+        return balanceOf(address(0));
+    }
+
     /// @notice Swap half of the locked 1POOL for BNB, and add liquidity
     /// on pancakeswap
-    function lockLiquidity(uint256 amount) private {
+    function lockLiquidity(uint256 amount) internal {
         // lockable supply is the token balance of this contract
         require(amount <= balanceOf(address(this)), "GouvernanceAndLockedERC20::lockLiquidity: lock amount higher than lockable balance");
         require(amount != 0, "GouvernanceAndLockedERC20::lockLiquidity: lock amount cannot be 0");
@@ -150,7 +156,7 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
     /// @notice reward liquidity providers by transfering
     /// 1POOL tokens to the PancakeSwap pair and perform a sync.
     /// @param amount the amount of LP tokens for rewarding
-    function rewardLiquidityProviders(uint256 amount) private {
+    function rewardLiquidityProviders(uint256 amount) internal {
         require(amount <= balanceOf(address(this)), "GouvernanceAndLockedERC20::rewardLiquidityProviders: amount higher than balance");
         require(amount != 0, "GouvernanceAndLockedERC20::rewardLiquidityProviders: amount cannot be 0");
         // avoid burn by calling super._transfer directly
@@ -161,7 +167,7 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
 
     /// @notice burn the locked tokens in the actual contract
     /// @param amount the amount to burn
-    function burnLockedTokens(uint256 amount) private {
+    function burnLockedTokens(uint256 amount) internal {
         require(amount <= balanceOf(address(this)), "GouvernanceAndLockedERC20::burnLockedTokens: amount higher than balance");
         require(amount != 0, "GouvernanceAndLockedERC20::burnLockedTokens: burn amount cannot be 0");
         _burn(address(this), amount);
@@ -169,7 +175,7 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
 
     /// @notice crate lottery gas with locked tokens (balance).
     /// Swap 1POOL for BOG and send the amount to the LotteryPool
-    function createLotteryGas(uint256 amount) private {
+    function createLotteryGas(uint256 amount) internal {
         require(amount <= balanceOf(address(this)), "GouvernanceAndLockedERC20::createLotteryGas: amount higher than balance");
         require(amount != 0, "GouvernanceAndLockedERC20::createLotteryGas: burn amount cannot be 0");
 
@@ -237,12 +243,23 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
     }
 
     /// @return the 1POOL supply in PancakeSwap Pair, with the given percentage applied.
-    /// @param percent the percentage, where x means x%
+    /// @param percent the percentage, where x means wei%
     function supplyOfPancakePair(uint256 percent) private view returns (uint256) {
         uint256 onePoolPancakeBalance = balanceOf(pancakeV2Pair);
 
         // (balance of 1POOL in PancakeSwap Pair x percent) / 100
         uint256 supply = onePoolPancakeBalance.mul(percent).div(1e12);
+        return supply;
+    }
+
+    /// @return the 1POOL supply in the OnePoolToken contract (aka locked tokens),
+    /// with the given percentage applied.
+    /// @param percent the percentage, where x means x%
+    function supplyOfLockedOnePool(uint256 percent) internal view returns (uint256) {
+        uint256 onePoolLockedBalance = balanceOf(address(this));
+
+        // (balance of locked 1POOL x percent) / 100
+        uint256 supply = onePoolLockedBalance.mul(percent).div(100);
         return supply;
     }
 }

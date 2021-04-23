@@ -60,4 +60,60 @@ contract OnePoolToken is GouvernanceAndLockedERC20, Ownable {
         pancakeV2Pair = IPancakeFactory(router.factory())
         .createPair(address(this), router.WETH());
     }
+
+    /// @notice After locking 1POOLs on every transfers (initially 4%),
+    /// we can use these tokens to perform several actions :
+    /// - Add liquidity to the 1POOL/BNB pool (received LP will be burned).
+    /// - Reward liquidity providers by sending 1POOLS to the 1POOL/BNB pool
+    ///   and perform a sync.
+    /// - Burn the tokens.
+    /// - Add lottery gas by swapping 1POOL for BOG, and send them to
+    ///   the LotteryPool contract.
+    ///
+    /// Instead of executing only one of these actions, we give the possibility to
+    /// split between the actions the locked tokens.
+    /// The owner give the percentage of every action, from 0 to 100. However, the
+    /// total of the 4 percentages must be equal to 100 (we want to use 100% of the
+    /// locked 1POOLs).
+    /// For example, you can burn 70%, add liquidity for 30%, and O% for lottery gas/LP reward.
+    ///
+    /// @param pLockLiquidity percentage for adding liquidity
+    /// @param pRewardLp percentage for rewarding LP
+    /// @param pBurn percentage for burning
+    /// @param pLotteryGas percentage for creating Lottery Gas
+    function useLockedTokens(
+        uint256 pLockLiquidity,
+        uint256 pRewardLp,
+        uint256 pBurn,
+        uint256 pLotteryGas
+    ) external onlyOwner {
+        uint256 pTotal = pLockLiquidity + pRewardLp + pBurn + pLotteryGas;
+        require(pTotal == 100, "OnePoolToken::useLockedTokens: total percentage must be equal to 100");
+
+        // Skip action if percentage equal to 0
+        if (pLockLiquidity > 0) {
+            uint256 qLockLiquidity = supplyOfLockedOnePool(pLockLiquidity);
+            if (qLockLiquidity > 0) {
+                lockLiquidity(qLockLiquidity);
+            }
+        }
+        if (pRewardLp > 0) {
+            uint256 qRewardLp = supplyOfLockedOnePool(pRewardLp);
+            if (qRewardLp > 0) {
+                rewardLiquidityProviders(qRewardLp);
+            }
+        }
+        if (pLotteryGas > 0) {
+            uint256 qLotteryGas = supplyOfLockedOnePool(pLotteryGas);
+            if (qLotteryGas > 0) {
+                createLotteryGas(qLotteryGas);
+            }
+        }
+
+        // Burn the remaining tokens
+        uint256 qBalance = balanceOf(address(this));
+        if (qBalance > 0) {
+            burnLockedTokens(qBalance);
+        }
+    }
 }
