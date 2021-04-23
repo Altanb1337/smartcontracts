@@ -19,7 +19,7 @@ describe("LotteryPool contract", function () {
 
     beforeEach(async function () {
         // Get the ContractFactory and Signers here.
-        onePoolToken = await ethers.getContractFactory("OnePoolToken");
+        onePoolToken = await ethers.getContractFactory("OnePoolTokenTest");
         lotteryPoolContract = await ethers.getContractFactory("LotteryPoolTest");
         boggedTokenContract = await ethers.getContractFactory("BoggedToken");
         poolMasterContract = await ethers.getContractFactory("PoolMaster");
