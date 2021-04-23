@@ -11,7 +11,7 @@ describe("Token contract", function () {
 
     beforeEach(async function () {
         // Get the ContractFactory and Signers here.
-        onePoolToken = await ethers.getContractFactory("OnePoolTokenTest");
+        onePoolToken = await ethers.getContractFactory("OnePoolToken");
         [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
         // To deploy our contract, we just have to call onePoolToken.deploy() and await

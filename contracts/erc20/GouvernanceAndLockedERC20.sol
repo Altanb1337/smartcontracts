@@ -26,6 +26,12 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
     // Divisor who determines the locked percentage of every transfer
     uint256 public liquidityLockDivisor;
 
+    // Bogged Finance Token
+    IERC20 public boggedToken;
+
+    // LotteryPool address
+    address public lotteryPoolAdr;
+
     /// @notice override erc-20 transfer to lock a part of
     /// tha amount in the contract.
     function _transfer(address from, address to, uint256 amount) internal override {
@@ -50,7 +56,7 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
     /// this function.
     function burnLiquidity() external {
         uint256 balance = ERC20(pancakeV2Pair).balanceOf(address(this));
-        require(balance != 0, "LockedERC20::burnLiquidity: burn amount cannot be 0");
+        require(balance != 0, "GouvernanceAndLockedERC20::burnLiquidity: burn amount cannot be 0");
         ERC20(pancakeV2Pair).transfer(address(0), balance);
         emit BurnLiquidity(balance);
     }
@@ -126,8 +132,8 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
     /// on pancakeswap
     function lockLiquidity(uint256 amount) private {
         // lockable supply is the token balance of this contract
-        require(amount <= balanceOf(address(this)), "LockedERC20::lockLiquidity: lock amount higher than lockable balance");
-        require(amount != 0, "LockedERC20::lockLiquidity: lock amount cannot be 0");
+        require(amount <= balanceOf(address(this)), "GouvernanceAndLockedERC20::lockLiquidity: lock amount higher than lockable balance");
+        require(amount != 0, "GouvernanceAndLockedERC20::lockLiquidity: lock amount cannot be 0");
 
         uint256 amountToSwapForBnb = amount.div(2);
         uint256 amountToAddLiquidity = amount.sub(amountToSwapForBnb);
@@ -142,10 +148,11 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
     }
 
     /// @notice reward liquidity providers by transfering
-    /// LP tokens from added liquidity to the PancakeSwap pair
-    /// and perform a sync
+    /// 1POOL tokens to the PancakeSwap pair and perform a sync.
     /// @param amount the amount of LP tokens for rewarding
     function rewardLiquidityProviders(uint256 amount) private {
+        require(amount <= balanceOf(address(this)), "GouvernanceAndLockedERC20::rewardLiquidityProviders: amount higher than balance");
+        require(amount != 0, "GouvernanceAndLockedERC20::rewardLiquidityProviders: amount cannot be 0");
         // avoid burn by calling super._transfer directly
         super._transfer(address(this), pancakeV2Pair, amount);
         IPancakePair(pancakeV2Pair).sync();
@@ -155,11 +162,22 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
     /// @notice burn the locked tokens in the actual contract
     /// @param amount the amount to burn
     function burnLockedTokens(uint256 amount) private {
+        require(amount <= balanceOf(address(this)), "GouvernanceAndLockedERC20::burnLockedTokens: amount higher than balance");
+        require(amount != 0, "GouvernanceAndLockedERC20::burnLockedTokens: burn amount cannot be 0");
         _burn(address(this), amount);
     }
 
+    /// @notice crate lottery gas with locked tokens (balance).
+    /// Swap 1POOL for BOG and send the amount to the LotteryPool
     function createLotteryGas(uint256 amount) private {
-        // TODO
+        require(amount <= balanceOf(address(this)), "GouvernanceAndLockedERC20::createLotteryGas: amount higher than balance");
+        require(amount != 0, "GouvernanceAndLockedERC20::createLotteryGas: burn amount cannot be 0");
+
+        swapOnePoolForBog(amount);
+        uint256 bogReceived = boggedToken.balanceOf(address(this));
+        require(bogReceived > 0, "GouvernanceAndLockedERC20::createLotteryGas: 0 BOG received from swap");
+
+        boggedToken.transfer(lotteryPoolAdr, bogReceived);
     }
 
     /// @notice swap 1POOL for BNB
@@ -173,6 +191,26 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
 
         IPancakeRouter02(pancakeV2Router)
         .swapExactTokensForETHSupportingFeeOnTransferTokens(
+            tokenAmount,
+            0,
+            pancakePairPath,
+            address(this),
+            block.timestamp
+        );
+    }
+
+    /// @notice Swap 1POOL for BOG
+    /// Use the PancakeSwap router to swap
+    function swapOnePoolForBog(uint256 tokenAmount) private {
+        address[] memory pancakePairPath = new address[](3);
+        pancakePairPath[0] = address(this);
+        pancakePairPath[1] = IPancakeRouter02(pancakeV2Router).WETH();
+        pancakePairPath[2] = address(boggedToken);
+
+        _approve(address(this), pancakeV2Router, tokenAmount);
+
+        IPancakeRouter02(pancakeV2Router)
+        .swapTokensForExactTokens(
             tokenAmount,
             0,
             pancakePairPath,

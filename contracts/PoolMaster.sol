@@ -272,6 +272,12 @@ contract PoolMaster is Ownable {
         devFundEnabled = false;
     }
 
+    /// @notice update the liquidity lock divisor from OnePoolToken
+    /// Since PoolMaster is the owner, we added this function.
+    function updateLiquidityLockDivisor(uint256 liquidityLockDivisor) external onlyOwner {
+        onepool.updateLiquidityLockDivisor(liquidityLockDivisor);
+    }
+
     /// @notice Safe 1POOL transfer function, just in case if rounding error
     /// causes pool to not have enough 1POOLs.
     function safeOnePoolTransfer(address _to, uint256 _amount) internal {

@@ -23,11 +23,6 @@ contract OnePoolToken is GouvernanceAndLockedERC20, Ownable {
 
         // 25 = 4% locked for every transfer
         liquidityLockDivisor = 25;
-
-        pancakeV2Router = 0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F;
-        IPancakeRouter02 router = IPancakeRouter02(pancakeV2Router);
-        pancakeV2Pair = IPancakeFactory(router.factory())
-        .createPair(address(this), router.WETH());
     }
 
     /// @notice Allow everybody to burn 1POOL tokens
@@ -43,5 +38,26 @@ contract OnePoolToken is GouvernanceAndLockedERC20, Ownable {
     /// @notice update the liquidity lock divisor
     function updateLiquidityLockDivisor(uint256 _liquidityLockDivisor) external onlyOwner {
         liquidityLockDivisor = _liquidityLockDivisor;
+    }
+
+    /// @notice the BoggedFinance token address
+    function updateBoggedTokenAddress(address bogTokenAddr) external onlyOwner {
+        boggedToken = IERC20(bogTokenAddr);
+    }
+
+    /// @notice update LotteryPool address
+    /// We need this address to send LotteryGas
+    function updateLotteryPoolAddress(address _lotteryPoolAdr) external onlyOwner {
+        lotteryPoolAdr = _lotteryPoolAdr;
+    }
+
+    /// @notice set PancakeSwapV2Router address and will create the 1POOL/BNB Pair
+    /// Once setted, it can't be done again.
+    function setPancakeSwapRouterAndCreatePair(address _pancakeV2Router) external onlyOwner {
+        require(pancakeV2Router == address(0), "OnePoolToken::setPancakeSwapRouterAndCreatePair: pancakeV2Router already setted");
+        pancakeV2Router = _pancakeV2Router;
+        IPancakeRouter02 router = IPancakeRouter02(pancakeV2Router);
+        pancakeV2Pair = IPancakeFactory(router.factory())
+        .createPair(address(this), router.WETH());
     }
 }
