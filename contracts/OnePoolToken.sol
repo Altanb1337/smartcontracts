@@ -8,10 +8,10 @@ pragma solidity >=0.6.0<0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./erc20/GouvernanceAndLockedERC20.sol";
+import "./erc20/LockedERC20.sol";
 import "./interfaces/IPancakeFactory.sol";
 
-contract OnePoolToken is GouvernanceAndLockedERC20, Ownable {
+contract OnePoolToken is LockedERC20("onepool.finance", "1POOL"), Ownable {
 
     using SafeMath for uint256;
 
@@ -69,6 +69,7 @@ contract OnePoolToken is GouvernanceAndLockedERC20, Ownable {
     /// - Burn the tokens.
     /// - Add lottery gas by swapping 1POOL for BOG, and send them to
     ///   the LotteryPool contract.
+    /// - Send tokens to the Lottery Pool to increase the reward
     ///
     /// Instead of executing only one of these actions, we give the possibility to
     /// split between the actions the locked tokens.
@@ -85,7 +86,8 @@ contract OnePoolToken is GouvernanceAndLockedERC20, Ownable {
         uint256 pLockLiquidity,
         uint256 pRewardLp,
         uint256 pBurn,
-        uint256 pLotteryGas
+        uint256 pLotteryGas,
+        uint256 pRewardLottery
     ) external onlyOwner {
         uint256 pTotal = pLockLiquidity + pRewardLp + pBurn + pLotteryGas;
         require(pTotal == 100, "OnePoolToken::useLockedTokens: total percentage must be equal to 100");
@@ -107,6 +109,12 @@ contract OnePoolToken is GouvernanceAndLockedERC20, Ownable {
             uint256 qLotteryGas = supplyOfLockedOnePool(pLotteryGas);
             if (qLotteryGas > 0) {
                 createLotteryGas(qLotteryGas);
+            }
+        }
+        if (pRewardLottery > 0) {
+            uint256 qRewardLottery = supplyOfLockedOnePool(pRewardLottery);
+            if (qRewardLottery > 0) {
+                increaseLotteryReward(qRewardLottery);
             }
         }
 

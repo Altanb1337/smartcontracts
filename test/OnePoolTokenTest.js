@@ -28,6 +28,10 @@ describe("Token contract", function () {
             expect(await token.owner()).to.equal(owner.address);
         });
 
+        it("Should set the 1POOL symbol", async function () {
+            expect(await token.symbol()).to.equal("1POOL");
+        });
+
         it("Should assign the total supply of tokens to the owner", async function () {
             const ownerBalance = await token.balanceOf(owner.address);
             expect(await token.totalSupply()).to.equal(ownerBalance);

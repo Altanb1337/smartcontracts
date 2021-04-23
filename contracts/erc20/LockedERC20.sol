@@ -1,13 +1,15 @@
 pragma solidity >=0.6.0<0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "./GouvernanceERC20.sol";
 import "../interfaces/IPancakePair.sol";
 import "../interfaces/IPancakeRouter02.sol";
 
 
 /// @title ERC-20 token with gouvernance and lock mechanism
-contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
+contract LockedERC20 is ERC20 {
+
+    constructor(string memory name_, string memory symbol_) ERC20(name_, symbol_) public {}
+
     using SafeMath for uint256;
 
     // Events
@@ -173,7 +175,7 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
         _burn(address(this), amount);
     }
 
-    /// @notice crate lottery gas with locked tokens (balance).
+    /// @notice create lottery gas with locked tokens (balance).
     /// Swap 1POOL for BOG and send the amount to the LotteryPool
     function createLotteryGas(uint256 amount) internal {
         require(amount <= balanceOf(address(this)), "GouvernanceAndLockedERC20::createLotteryGas: amount higher than balance");
@@ -184,6 +186,14 @@ contract GouvernanceAndLockedERC20 is GouvernanceERC20 {
         require(bogReceived > 0, "GouvernanceAndLockedERC20::createLotteryGas: 0 BOG received from swap");
 
         boggedToken.transfer(lotteryPoolAdr, bogReceived);
+    }
+
+    /// @notice increase the lottery reward with locked tokens (balance).
+    /// Send the tokens to the LotteryPool contract.
+    function increaseLotteryReward(uint256 amount) internal {
+        require(amount <= balanceOf(address(this)), "GouvernanceAndLockedERC20::createLotteryGas: amount higher than balance");
+        require(amount != 0, "GouvernanceAndLockedERC20::createLotteryGas: burn amount cannot be 0");
+        super._transfer(address(this), lotteryPoolAdr, amount);
     }
 
     /// @notice swap 1POOL for BNB
