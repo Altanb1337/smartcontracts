@@ -59,6 +59,9 @@ contract LotteryPoolTest is Ownable, IReceivesBogRand {
     // If issues with the contract, can stop the lottery mechanism
     bool public stopped;
 
+    // BOG fee amount for using the Oracle
+    uint256 public bogFee;
+
     // When you play to the lottery, you are waiting for the BogRNG oracle (not on the same
     // transaction) to give a random number and trigger the lottery (run).
     // The current player is the one waiting for this event.
@@ -78,6 +81,7 @@ contract LotteryPoolTest is Ownable, IReceivesBogRand {
         pauseDuration = 30 minutes;
         stopped = true;
         playing = false;
+        bogFee = uint256(25).mul(1e16); // 0.25
 
         // (TEST) oracle = IBogRandOracle(_bogRandOracleAddr);
         boggedToken = IERC20(_bogTokenAddr);
@@ -95,8 +99,10 @@ contract LotteryPoolTest is Ownable, IReceivesBogRand {
         require(allowedToPlay(_bet, msg.sender), "You're not allowed to play");
         require(onepool.balanceOf(address(msg.sender)) >= _bet, "You can't bet more than what you have");
 
-        // Send 0.25 BOG to the lottery pool (to pay the fees)
-        boggedToken.transferFrom(msg.sender, address(this), uint256(25).mul(1e16));
+        if (neededBogAmount() > 0) {
+            // Send 0.25 BOG to the lottery pool (to pay the fees)
+            boggedToken.transferFrom(msg.sender, address(this), bogFee);
+        }
 
         // Burn the bet whatever the result
         // We send the amount to the pool then the pool burn the amount
@@ -152,7 +158,7 @@ contract LotteryPoolTest is Ownable, IReceivesBogRand {
     function allowedToPlay(uint256 bet, address player) public view returns (bool) {
         return !stopped && !won(player) && unpausable() && rightBetAmount(bet)
                 && !Address.isContract(player) && !playing
-                && boggedToken.balanceOf(player) >= uint256(25).mul(1e16)
+                && isRightBogBalance(player)
                 && bet > 0;
     }
 
@@ -193,6 +199,12 @@ contract LotteryPoolTest is Ownable, IReceivesBogRand {
         pauseDuration = _duration;
     }
 
+    /// @return the lottery gas value
+    /// Lottery Gas means the LotteryPool BOG balance
+    function lotteryGas() public view returns (uint256){
+        return boggedToken.balanceOf(address(this));
+    }
+
     /// Randomness callback function
     /// @notice Receive the random number from BogRNG and run the lottery
     /// for the player waiting
@@ -225,9 +237,22 @@ contract LotteryPoolTest is Ownable, IReceivesBogRand {
         }
     }
 
+    /// @notice give the needed amount of bog to play the Lottery.
+    /// If there is enough Lottery Gas, the player doesn't need any BOG (returns 0)
+    /// If not, he needs 0,25 BOG
+    function neededBogAmount() private view returns (uint256) {
+        return (lotteryGas() >= bogFee) ? 0 : bogFee;
+    }
+
+    /// @return true if the bog balance of the given address is enough
+    /// ( > 0.25 if no lottery gas)
+    function isRightBogBalance(address _address) private view returns (bool) {
+        return boggedToken.balanceOf(_address) >= neededBogAmount();
+    }
+
     /// @return true if the bet is half inferior than the lottery pool
     /// If the pool equal 0, then return false
-    function rightBetAmount(uint256 _bet) internal view returns (bool) {
+    function rightBetAmount(uint256 _bet) private view returns (bool) {
         if (nextReward() == 0) {
             return false;
         }
@@ -240,7 +265,7 @@ contract LotteryPoolTest is Ownable, IReceivesBogRand {
     /// Note :
     /// When the player wins, he wins the reward amount at the moment he played.
     /// It means that the pool can grow while waiting for the oracle callback.
-    function run(uint256 _externalRandomNumber) internal returns (bool) {
+    function run(uint256 _externalRandomNumber) private returns (bool) {
         require(playing, "Need to be playing");
         bool result = false;
 

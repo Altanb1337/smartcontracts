@@ -211,12 +211,52 @@ describe("LotteryPool contract", function () {
             await token.connect(addr2).approve(lotteryPool.address, amount);
 
             // addr2 playing
-            await token.transfer(addr1.address, 100); // owner transferring 1POOL to addr2
+            await token.transfer(addr2.address, 100); // owner transferring 1POOL to addr2
 
             // addr2 has no BOG tokens, should be reverted
             await expect(
                 lotteryPool.connect(addr2).play(1)
             ).to.be.revertedWith("You're not allowed to play");
+        });
+
+        it("Should allow to play if enough Lottery Gas", async function () {
+            // Approving for addr2
+            let amount = ethers.utils.parseEther('10000000');
+            await boggedToken.connect(addr2).approve(lotteryPool.address, amount);
+            await token.connect(addr2).approve(lotteryPool.address, amount);
+
+            // owner Lottery Gas
+            let feeBog = ethers.utils.parseEther('0.25');
+            await boggedToken.transfer(lotteryPool.address, feeBog)
+
+            // addr2 playing
+            await token.transfer(addr2.address, 100); // owner transferring 1POOL to addr2
+
+            // addr2 has no BOG tokens, but there is 0.25 in lottery gas
+            // it should not be reverted
+            await lotteryPool.connect(addr2).play(1);
+        });
+
+        it("Should not spend player BOG if enough Lottery Gas", async function () {
+            // Approving for addr2
+            let amount = ethers.utils.parseEther('10000000');
+            await boggedToken.connect(addr2).approve(lotteryPool.address, amount);
+            await token.connect(addr2).approve(lotteryPool.address, amount);
+
+            // owner Lottery Gas
+            let feeBog = ethers.utils.parseEther('0.25');
+            await boggedToken.transfer(lotteryPool.address, feeBog)
+            await boggedToken.transfer(addr2.address, feeBog)
+
+            // addr2 playing
+            await token.transfer(addr2.address, 100); // owner transferring 1POOL to addr2
+
+            await lotteryPool.connect(addr2).play(1);
+
+            // The player bog balance didn't change
+            const bogBalance = await boggedToken.balanceOf(addr2.address);
+            expect(bogBalance).to.equal(feeBog);
+
         });
 
         it("Should change currentPlayer", async function () {
