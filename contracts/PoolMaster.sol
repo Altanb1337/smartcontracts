@@ -186,8 +186,8 @@ contract PoolMaster is Ownable {
     /// @notice Update the value of onePoolPerBlock
     /// Must be between O.5 and 1.5 1POOL per block
     function updateOnePoolPerBlock(uint256 _onePoolPerBlock) external onlyOwner {
-        require(_onePoolPerBlock <= uint256(15).mul(1e17) && _onePoolPerBlock >= uint256(5).mul(1e17),
-            "Invalid _onePoolPerBlock, not between 0.5 and 1.5");
+        require(_onePoolPerBlock <= uint256(1).mul(1e18) && _onePoolPerBlock >= uint256(1).mul(1e16),
+            "Invalid _onePoolPerBlock, not between 0.01 and 1");
         onePoolPerBlock = _onePoolPerBlock;
     }
 

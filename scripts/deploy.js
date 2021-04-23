@@ -33,7 +33,7 @@ async function main() {
     });
 
     // Deploy PoolMaster
-    let onePoolPerBlock = ethers.utils.parseEther('1');
+    let onePoolPerBlock = ethers.utils.parseEther('0.25');
     const poolMaster = await poolMasterContract.deploy(onePoolToken.address, devAddress, 1, 1, onePoolPerBlock, lotteryPool.address);
     await poolMaster.deployed();
     console.log("PoolMaster deployed to:", poolMaster.address);
