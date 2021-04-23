@@ -104,21 +104,21 @@ describe("PoolMaster contract", function () {
             var amount = 0;
             await expect(
                 poolMaster.updatePoolRewardDivisor(amount)
-            ).to.be.revertedWith("_poolRewardDivisor must be between 10 and 20");
+            ).to.be.revertedWith("_poolRewardDivisor must be between 1 and 20");
 
-            amount = 9;
+            amount = 100;
             await expect(
                 poolMaster.updatePoolRewardDivisor(amount)
-            ).to.be.revertedWith("_poolRewardDivisor must be between 10 and 20");
+            ).to.be.revertedWith("_poolRewardDivisor must be between 1 and 20");
 
             amount = 21;
             await expect(
                 poolMaster.updatePoolRewardDivisor(amount)
-            ).to.be.revertedWith("_poolRewardDivisor must be between 10 and 20");
+            ).to.be.revertedWith("_poolRewardDivisor must be between 1 and 20");
 
             // Nothing changed
             const poolRewardDivisor = await poolMaster.poolRewardDivisor();
-            expect(poolRewardDivisor).to.equal(10);
+            expect(poolRewardDivisor).to.equal(2);
         });
     });
 });

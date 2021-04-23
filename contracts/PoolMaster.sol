@@ -79,7 +79,8 @@ contract PoolMaster is Ownable {
     uint256 public startBlock;
 
     // Divisor who determines the percentage for the LotteryPool
-    uint256 public poolRewardDivisor = 10;
+    // Initially 50%
+    uint256 public poolRewardDivisor = 2;
 
     // If the devfund is enabled
     bool public devFundEnabled = true;
@@ -169,11 +170,11 @@ contract PoolMaster is Ownable {
     }
 
     /// @notice update the poolRewardDivisor
-    /// @param _poolRewardDivisor between 7 and 20.
-    /// It means that the percentage for the liquidity pool is only between 5% and 10%
+    /// @param _poolRewardDivisor between 1 and 20.
+    /// It means that the percentage for the liquidity pool is only between 10% and 100%
     /// This mechanism regulates the growth of the LotteryPool
     function updatePoolRewardDivisor(uint256 _poolRewardDivisor) external onlyOwner {
-        require(_poolRewardDivisor <= 20 && _poolRewardDivisor >= 10, "_poolRewardDivisor must be between 10 and 20");
+        require(_poolRewardDivisor <= 20 && _poolRewardDivisor >= 1, "_poolRewardDivisor must be between 1 and 20");
         poolRewardDivisor = _poolRewardDivisor;
     }
 
