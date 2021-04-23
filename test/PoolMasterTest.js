@@ -69,21 +69,21 @@ describe("PoolMaster contract", function () {
             expect(onePoolPerBlock).to.equal(amount);
         });
 
-        it("Shouldn't allow onePoolPerBlock outside 0.5-1.5 range", async function () {
-            var amount = ethers.utils.parseEther('0.4');
+        it("Shouldn't allow onePoolPerBlock outside 0.01-1 range", async function () {
+            var amount = ethers.utils.parseEther('0.009');
             await expect(
                 poolMaster.updateOnePoolPerBlock(amount)
-            ).to.be.revertedWith("Invalid _onePoolPerBlock, not between 0.5 and 1.5");
+            ).to.be.revertedWith("Invalid _onePoolPerBlock, not between 0.01 and 1");
 
             amount = ethers.utils.parseEther('0');
             await expect(
                 poolMaster.updateOnePoolPerBlock(amount)
-            ).to.be.revertedWith("Invalid _onePoolPerBlock, not between 0.5 and 1.5");
+            ).to.be.revertedWith("Invalid _onePoolPerBlock, not between 0.01 and 1");
 
-            amount = ethers.utils.parseEther('1.6');
+            amount = ethers.utils.parseEther('1.1');
             await expect(
                 poolMaster.updateOnePoolPerBlock(amount)
-            ).to.be.revertedWith("Invalid _onePoolPerBlock, not between 0.5 and 1.5");
+            ).to.be.revertedWith("Invalid _onePoolPerBlock, not between 0.01 and 1");
 
             // Nothing changed
             const onePoolPerBlock = await poolMaster.onePoolPerBlock();
