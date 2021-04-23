@@ -106,12 +106,12 @@ describe("PoolMaster contract", function () {
                 poolMaster.updatePoolRewardDivisor(amount)
             ).to.be.revertedWith("_poolRewardDivisor must be between 10 and 20");
 
-            var amount = 9;
+            amount = 9;
             await expect(
                 poolMaster.updatePoolRewardDivisor(amount)
             ).to.be.revertedWith("_poolRewardDivisor must be between 10 and 20");
 
-            var amount = 21;
+            amount = 21;
             await expect(
                 poolMaster.updatePoolRewardDivisor(amount)
             ).to.be.revertedWith("_poolRewardDivisor must be between 10 and 20");

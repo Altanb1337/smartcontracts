@@ -8,21 +8,10 @@ pragma solidity >=0.6.0<0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "./OnePoolToken.sol";
+import "./interfaces/IReceivesBogRand.sol";
+import "./interfaces/IBogRandOracle.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
-
-interface IReceivesBogRand {
-    function receiveRandomness(uint256 random) external;
-}
-
-interface IBogRandOracle {
-    function requestRandomness() external;
-    function getNextHash() external view returns (bytes32);
-    function getPendingRequest() external view returns (address);
-    function removePendingRequest(address adr, bytes32 nextHash) external;
-    function provideRandomness(uint256 random, bytes32 nextHash) external;
-    function seed(bytes32 hash) external;
-}
 
 /// @title Lottery smart contract of onepool.finance
 /// Using BogTools (BogRNG) to get random numbers
@@ -243,6 +232,12 @@ contract LotteryPool is Ownable, IReceivesBogRand {
         } else {
             return (winner.timestamp + pauseDuration);
         }
+    }
+
+    /// @notice allow the owner to change the oracle
+    /// in case of new BogTools Oracle (if same mechanism)
+    function updateOracle(address _bogRandOracleAddr) external onlyOwner {
+        oracle = IBogRandOracle(_bogRandOracleAddr);
     }
 
     /// @notice give the needed amount of bog to play the Lottery.
