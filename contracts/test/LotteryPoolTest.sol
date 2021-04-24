@@ -3,20 +3,9 @@ pragma solidity >=0.6.0<0.8.0;
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
+import "../interfaces/IReceivesBogRand.sol";
+import "../interfaces/IBogRandOracle.sol";
 import "../OnePoolToken.sol";
-
-interface IReceivesBogRand {
-    function receiveRandomness(uint256 random) external;
-}
-
-interface IBogRandOracle {
-    function requestRandomness() external;
-    function getNextHash() external view returns (bytes32);
-    function getPendingRequest() external view returns (address);
-    function removePendingRequest(address adr, bytes32 nextHash) external;
-    function provideRandomness(uint256 random, bytes32 nextHash) external;
-    function seed(bytes32 hash) external;
-}
 
 /// @title Test Lottery smart contract
 /// Remove the usage of the oracle, the random number is given by anyone
