@@ -89,7 +89,7 @@ contract OnePoolToken is LockedERC20("onepool.finance", "1POOL"), Ownable {
         uint256 pLotteryGas,
         uint256 pRewardLottery
     ) external onlyOwner {
-        uint256 pTotal = pLockLiquidity + pRewardLp + pBurn + pLotteryGas;
+        uint256 pTotal = pLockLiquidity + pRewardLp + pBurn + pLotteryGas + pRewardLottery;
         require(pTotal == 100, "OnePoolToken::useLockedTokens: total percentage must be equal to 100");
 
         // Skip action if percentage equal to 0
