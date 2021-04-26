@@ -279,6 +279,16 @@ contract PoolMaster is Ownable {
         onepool.updateLiquidityLockDivisor(liquidityLockDivisor);
     }
 
+    function useLockedTokens(
+        uint256 pLockLiquidity,
+        uint256 pRewardLp,
+        uint256 pBurn,
+        uint256 pLotteryGas,
+        uint256 pRewardLottery
+    ) external onlyOwner {
+        onepool.useLockedTokens(pLockLiquidity, pRewardLp, pBurn, pLotteryGas, pRewardLottery);
+    }
+
     /// @notice Safe 1POOL transfer function, just in case if rounding error
     /// causes pool to not have enough 1POOLs.
     function safeOnePoolTransfer(address _to, uint256 _amount) internal {

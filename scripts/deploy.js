@@ -5,7 +5,7 @@ async function main() {
     const lotteryPoolContract = await ethers.getContractFactory("LotteryPoolTest");
     const poolMasterContract = await ethers.getContractFactory("PoolMaster");
     const bogAddress = "0xd7b729ef857aa773f47d37088a1181bb3fbf0099";
-    const devAddress = "0xCCb073371c84c5Ef0d0E1F699aB58084D9514cC9"
+    const devAddress = "0xCCb073371c84c5Ef0d0E1F699aB58084D9514cC9";
     const pancakeSwapRouter = "0x05fF2B0DB69458A0750badebc4f9e13aDd608C7F"
 
     // Deploy OnePoolToken
@@ -58,15 +58,16 @@ async function main() {
     console.log("LotteryPool address of OnePoolToken setted");
 
     // Set PancakeSwapRouter of OnePoolToken and create 1POOL/BNB pair
-    await onePoolToken.setPancakeSwapRouterAndCreatePair(pancakeSwapRouter);
+    await onePoolToken.setPancakeSwapRouter(pancakeSwapRouter);
     console.log("PancakeSwapRouter address of OnePoolToken setted")
 
-    const pancakeSwapPair = await onePoolToken.pancakeV2Pair();
-    console.log("1POOL/BNB pair created on PancakeSwap", pancakeSwapPair)
+    // TODO CreatePair
 
-    // PoolMaster is the new owner of OnePoolToken
-    await onePoolToken.transferOwnership(poolMaster.address);
-    console.log("Transfer OnePoolToken ownership to PoolMaster");
+    // TODO Approve Router for Bog and 1POOL
+
+    // TODO (if needed) AddLiquidityETH for BOG and 1POOL
+
+    // TODO TransferOwnership to PoolMaster
 }
 
 // We recommend this pattern to be able to use async/await everywhere

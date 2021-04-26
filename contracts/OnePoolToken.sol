@@ -51,14 +51,17 @@ contract OnePoolToken is LockedERC20("onepool.finance", "1POOL"), Ownable {
         lotteryPoolAdr = _lotteryPoolAdr;
     }
 
-    /// @notice set PancakeSwapV2Router address and will create the 1POOL/BNB Pair
+    /// @notice set PancakeSwapV2Router address
     /// Once setted, it can't be done again.
-    function setPancakeSwapRouterAndCreatePair(address _pancakeV2Router) external onlyOwner {
+    function setPancakeSwapRouter(address _pancakeV2Router) external onlyOwner {
         require(pancakeV2Router == address(0), "OnePoolToken::setPancakeSwapRouterAndCreatePair: pancakeV2Router already setted");
         pancakeV2Router = _pancakeV2Router;
+    }
+
+    /// @notice will create the 1POOL/BNB Pair
+    function createPair() external onlyOwner {
         IPancakeRouter02 router = IPancakeRouter02(pancakeV2Router);
-        pancakeV2Pair = IPancakeFactory(router.factory())
-        .createPair(address(this), router.WETH());
+        pancakeV2Pair = IPancakeFactory(router.factory()).createPair(address(this), router.WETH());
     }
 
     /// @notice After locking 1POOLs on every transfers (initially 4%),
@@ -92,27 +95,29 @@ contract OnePoolToken is LockedERC20("onepool.finance", "1POOL"), Ownable {
         uint256 pTotal = pLockLiquidity + pRewardLp + pBurn + pLotteryGas + pRewardLottery;
         require(pTotal == 100, "OnePoolToken::useLockedTokens: total percentage must be equal to 100");
 
+        uint256 initBalance = balanceOf(address(this));
+
         // Skip action if percentage equal to 0
         if (pLockLiquidity > 0) {
-            uint256 qLockLiquidity = supplyOfLockedOnePool(pLockLiquidity);
+            uint256 qLockLiquidity = supplyOfLockedOnePool(pLockLiquidity, initBalance);
             if (qLockLiquidity > 0) {
                 lockLiquidity(qLockLiquidity);
             }
         }
         if (pRewardLp > 0) {
-            uint256 qRewardLp = supplyOfLockedOnePool(pRewardLp);
+            uint256 qRewardLp = supplyOfLockedOnePool(pRewardLp, initBalance);
             if (qRewardLp > 0) {
                 rewardLiquidityProviders(qRewardLp);
             }
         }
         if (pLotteryGas > 0) {
-            uint256 qLotteryGas = supplyOfLockedOnePool(pLotteryGas);
+            uint256 qLotteryGas = supplyOfLockedOnePool(pLotteryGas, initBalance);
             if (qLotteryGas > 0) {
                 createLotteryGas(qLotteryGas);
             }
         }
         if (pRewardLottery > 0) {
-            uint256 qRewardLottery = supplyOfLockedOnePool(pRewardLottery);
+            uint256 qRewardLottery = supplyOfLockedOnePool(pRewardLottery, initBalance);
             if (qRewardLottery > 0) {
                 increaseLotteryReward(qRewardLottery);
             }
@@ -123,5 +128,7 @@ contract OnePoolToken is LockedERC20("onepool.finance", "1POOL"), Ownable {
         if (qBalance > 0) {
             burnLockedTokens(qBalance);
         }
+
+        emit lockedSupplyUsed(initBalance);
     }
 }

@@ -18,6 +18,7 @@ contract LockedERC20 is ERC20 {
     event BurnLockedToken(uint256 tokenAmount);
     event LotteryGasCreated(uint256 tokenAmount, uint256 bogAmount);
     event RewardLiquidityProviders(uint256 tokenAmount);
+    event lockedSupplyUsed(uint256 amount);
 
     // PancakeSwap Router address
     address public pancakeV2Router;
@@ -130,12 +131,6 @@ contract LockedERC20 is ERC20 {
         return ERC20(pancakeV2Pair).balanceOf(address(0));
     }
 
-    /// @notice returns the amount of 1POOL burned
-    /// (Lottery and locked tokens)
-    function burnedSupply() public view returns (uint256) {
-        return balanceOf(address(0));
-    }
-
     /// @notice Swap half of the locked 1POOL for BNB, and add liquidity
     /// on pancakeswap
     function lockLiquidity(uint256 amount) internal {
@@ -226,7 +221,7 @@ contract LockedERC20 is ERC20 {
         _approve(address(this), pancakeV2Router, tokenAmount);
 
         IPancakeRouter02(pancakeV2Router)
-        .swapTokensForExactTokens(
+        .swapExactTokensForTokens(
             tokenAmount,
             0,
             pancakePairPath,
@@ -262,12 +257,11 @@ contract LockedERC20 is ERC20 {
         return supply;
     }
 
-    /// @return the 1POOL supply in the OnePoolToken contract (aka locked tokens),
+    /// @return the 1POOL supply of the given balance
     /// with the given percentage applied.
     /// @param percent the percentage, where x means x%
-    function supplyOfLockedOnePool(uint256 percent) internal view returns (uint256) {
-        uint256 onePoolLockedBalance = balanceOf(address(this));
-
+    /// @param onePoolLockedBalance locked onepool
+    function supplyOfLockedOnePool(uint256 percent, uint256 onePoolLockedBalance) internal pure returns (uint256) {
         // (balance of locked 1POOL x percent) / 100
         uint256 supply = onePoolLockedBalance.mul(percent).div(100);
         return supply;
